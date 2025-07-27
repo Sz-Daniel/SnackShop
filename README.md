@@ -16,6 +16,11 @@ npm start
 
 ---
 
+## Next
+
+- Cart
+- Global Error handling
+
 ## Roadmap
 
 - Basic backend setup
@@ -25,7 +30,7 @@ npm start
 - Login / Registration page
 - Order page
 - Separation of layouts: public / user / admin
-- Full frontend refactor
+- Full frontend refactor with MUI
 
 ---
 
@@ -34,7 +39,7 @@ npm start
 #### Development Perspective
 
 - Parallel development and synchronization: Frontend → Backend
-- Initial goal: make it "somehow" work → then structure and optimize → make it as readable and usable as if I received it from someone else
+- Initial goal: make it 'somehow' work → then structure and optimize → make it as readable and usable as possible. Let it be the kind I would like to receive from someone else.
 - The main SPA page should be fully functional without admin/user rights
 - Refactoring needed on both frontend and backend sides
 - The README will be fully extended and rewritten after the first major refactor once the main SPA is functional
@@ -71,6 +76,7 @@ npm start
 - Middleware: `isAuthenticated`, `isAdmin`
 - Session and cookie handling
 - CORS configured
+- Parallel API refactoring alongside frontend development
 
 #### Frontend
 
@@ -78,6 +84,8 @@ npm start
 - Routing structure
 - Layout setup
 - Single Page Application: main page implemented
+- ProductList
+- ProductDisplay - Delete - Modif
 
 ---
 
@@ -91,3 +99,17 @@ npm start
 #### public.js
 
 - `GET /api/products` – snacks listing
+
+#### admin.js
+
+- `PUT /api/products/:id` - Product data modification
+- `DELETE /api/products/:id` - Delete product
+
+#### devRoutes.js
+
+- `GET /api/allTable` - Get the whole database
+
+- `GET /api/resetDummyProducts` - Delete all Product and replace the Dummy ones
+
+- `POST /api/dummyPost/:id`, `DELETE /api/dummyDelete/:id`, `PUT /api/dummyPut/:id` -
+  Testing the Methods inputs

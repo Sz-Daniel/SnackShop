@@ -2,12 +2,14 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from '../pages/Layout';
 import { SPA } from '../pages/SPA';
+import { ServerDown } from '../pages/ServerDown';
 
 export function AppRoutes() {
   return (
     <>
       <BrowserRouter>
         <Routes>
+          <Route path="/server-down" element={<ServerDown />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<SPA />} />
           </Route>

@@ -5,14 +5,26 @@ const apiClient = axios.create({
   withCredentials: true,
 });
 
-async function testBackend() {
+export async function apiDeleteProduct(id: number) {
   try {
-    const response = await apiClient.get('/api/health');
-    console.log('Backend válasz:', response.data);
+    const response = await apiClient.delete(`/api/products/${id}`);
+    return response.data;
   } catch (error) {
-    console.error('Hiba a backend tesztelésekor:', error);
+    console.error('Törlés sikertelen:', error);
+    throw error;
   }
 }
 
-testBackend();
 export default apiClient;
+
+/**
+ * apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (!error.response) {
+      window.location.href = '/server-down';
+    }
+    return Promise.reject(error);
+  }
+);
+ */

@@ -26,6 +26,7 @@ export default async function authRoutes(fastify, options) {
 
     return reply.send({ success: true });
   });
+
   //Login
   fastify.post('/api/login', async (request, reply) => {
     if (!request.session) {

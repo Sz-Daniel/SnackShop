@@ -1,4 +1,5 @@
 export default async function devRoutes(fastify, options) {
+  // Check the db data
   fastify.get('/api/allTable', async (request, reply) => {
     const tablesMeta = await fastify.db.all(
       "SELECT name FROM sqlite_master WHERE type='table'"
@@ -10,22 +11,32 @@ export default async function devRoutes(fastify, options) {
     }
     return { dbTables };
   });
-  fastify.get('/api/createDummyProducts', async (request, reply) => {
+
+  // Create Dummy Products
+  fastify.get('/api/resetDummyProducts', async (request, reply) => {
+    await fastify.db.run(' DELETE FROM products');
     await fastify.db.run(
-      "INSERT INTO products (name, stock, price) VALUES ('BBQ Chips', 100, 600), ('Salted Pretzels', 150, 450),('Cheddar Popcorn', 120, 550),('Spicy Nachos', 80, 700),('Honey Roasted Peanuts', 200, 500),('Cinnamon Apple Chips', 90, 650)"
+      `INSERT INTO products (name, stock, price) VALUES 
+      ('BBQ Chips', 100, 600),
+      ('Salted Pretzels', 150, 450),
+      ('Cheddar Popcorn', 120, 550),
+      ('Spicy Nachos', 80, 700),
+      ('Honey Roasted Peanuts', 200, 500),
+      ('Cinnamon Apple Chips', 90, 650)`
     );
     reply.send({ status: 'ok' });
   });
-  fastify.get('/api/deleteProducts', async (request, reply) => {
-    await fastify.db.run(' DELETE FROM products');
-    reply.send({ status: 'ok' });
-  });
 
-  fastify.get('/test', async (request, reply) => {
-    reply.send({ hello: 'world' });
+  //Dummy post to check data
+  fastify.post('/api/dummyPost/:id', async (request, reply) => {
+    reply.send({ request: request });
   });
-
-  fastify.get('/api/health', async (request, reply) => {
-    return { status: 'ok', message: 'Backend működik' };
+  //Dummy delete to check data
+  fastify.delete('/api/dummyDelete/:id', async (request, reply) => {
+    reply.send({ request: request });
+  });
+  //Dummy put to check data
+  fastify.put('/api/dummyPut/:id', async (request, reply) => {
+    reply.send({ request: request });
   });
 }

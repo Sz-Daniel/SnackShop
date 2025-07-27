@@ -1,22 +1,22 @@
 import { useProducts } from '../api/apiHooks';
 import { Box } from '@mui/material';
+import { ProductModif } from './Product';
+import { useEffect, useState } from 'react';
+import { Product } from '../type/type';
 
 export function ProductList() {
-  const { data, error } = useProducts();
+  const [productList, setProductList] = useState<Product[]>([]);
+  const { data, error, setReload } = useProducts();
 
-  const productModific = () => {};
+  useEffect(() => {
+    setProductList(data);
+  }, [data]);
+
   return (
     <>
-      {data.map((prod) => (
+      {productList.map((prod) => (
         <Box key={prod.id} border={1} padding={2} margin={1}>
-          <div>
-            <div>
-              <strong>{prod.name}</strong>
-            </div>
-            <div>Ár: {prod.price} Ft</div>
-            <div>Készlet: {prod.stock}</div>
-            <button onClick={() => {}}>Termék Módosítása</button>
-          </div>
+          <ProductModif product={prod} setReload={setReload} />
         </Box>
       ))}
     </>

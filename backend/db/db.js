@@ -3,18 +3,16 @@ import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import bcrypt from 'bcrypt';
 
-// sqlite3 verbose segít hibák jobb láthatóságában, ha szükséges:
-// sqlite3.verbose();
+sqlite3.verbose();
 
 export async function initDb() {
-  // Nyiss egy SQLite adatbázis kapcsolatot egy fájlhoz (app.db)
+  //DB dec
   const db = await open({
     filename: './app.db',
     driver: sqlite3.Database,
   });
 
-  // Táblák létrehozása, ha még nem léteznek
-  // Később schema.sql ?
+  //DB ini
   await db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
