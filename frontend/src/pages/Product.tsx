@@ -1,13 +1,28 @@
-import { Button, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  TextField,
+} from '@mui/material';
 import { Product } from '../type/type';
-import { apiDeleteProduct } from '../api/apiClient';
-import { useEffect, useState } from 'react';
-import { updateProduct } from '../api/apiHooks';
-interface props {
+
+import { useState } from 'react';
+import { deleteProduct, updateProduct, uploadProduct } from '../api/apiHooks';
+import isEqual from 'lodash/isEqual';
+import z from 'zod';
+
+interface Props {
   product: Product;
   setReload: React.Dispatch<React.SetStateAction<boolean>>;
 }
-export function ProductDisplay(props: props) {
+export const productSchema = z.object({
+  name: z.string().min(1, 'A név nem lehet üres'),
+  price: z.number().min(0, 'Az ár pozitív szám kell legyen'),
+  stock: z.number().int().min(0, 'A készlet nem lehet negatív'),
+});
+export function ProductDisplay(props: Props) {
   const { product } = props;
   return (
     <>
@@ -20,27 +35,22 @@ export function ProductDisplay(props: props) {
   );
 }
 
-export function ProductModif(props: props) {
+export function ProductAdmin(props: Props) {
   const { product, setReload } = props;
-  const [modifProduct, setModifProduct] = useState<Product>(product);
-
-  useEffect(() => {
-    console.log('MODIF', modifProduct);
-  }, [modifProduct]);
+  const [inputDataProduct, setInputDataProduct] = useState<Product>(product);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleDeleteProduct = async (id: number) => {
-    console.log('handleDeleteProduct', id);
     try {
-      const result = await apiDeleteProduct(id);
-      console.log('SIKER handleDeleteProduct', id, result);
+      const result = await deleteProduct(id);
       setReload((prev) => !prev);
-    } catch (err) {
-      console.log({
-        type: 'ERROR',
-        fnc: 'handleDeleteProduct',
-        param: id,
-        error: err,
-      });
+    } catch (error: any) {
+      // Validációs hiba esetén itt jelenik meg az üzenet a konzolon
+      if (error.validation) {
+        console.log('Validációs hiba:', error.validation);
+      } else {
+        console.log('Hiba történt:', error.message || error);
+      }
     }
   };
 
@@ -49,75 +59,144 @@ export function ProductModif(props: props) {
   };
 
   const handleModifProduct = async (id: number) => {
-    console.log('handleModifProduct', id);
-    try {
-      const result = await updateProduct(modifProduct);
-      console.log('SIKER handleModifProduct', id, result);
-    } catch (error) {
-      console.log({
-        type: 'ERROR',
-        fnc: 'handleModifProduct',
-        param: id,
-        error: error,
+    const result = productSchema.safeParse(inputDataProduct);
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      setErrors({
+        name: fieldErrors.name?.[0] || '',
+        price: fieldErrors.price?.[0] || '',
+        stock: fieldErrors.stock?.[0] || '',
       });
+      return;
+    } else {
+      setErrors({}); // előző hibák törlése
+      try {
+        const result = await updateProduct(inputDataProduct);
+        setReload((prev) => !prev);
+      } catch (error: any) {
+        if (error.validation) {
+          console.log('Validációs hiba:', error.validation);
+        } else {
+          console.log('Hiba történt:', error.message || error);
+        }
+      }
+    }
+  };
+
+  const handleUploadProduct = async () => {
+    try {
+      const result = await uploadProduct(inputDataProduct);
+      setReload((prev) => !prev);
+    } catch (error: any) {
+      // Validációs hiba esetén itt jelenik meg az üzenet a konzolon
+      if (error.validation) {
+        console.log('Validációs hiba:', error.validation);
+      } else {
+        console.log('Hiba történt:', error.message || error);
+      }
     }
   };
 
   return (
     <>
-      <TextField
-        label="Név"
-        type="text"
-        value={modifProduct.name}
-        onChange={(e) =>
-          setModifProduct({ ...modifProduct, name: e.target.value })
-        }
-        fullWidth
-        margin="dense"
-      />
-      <TextField
-        label="Ár"
-        type="number"
-        value={modifProduct.price}
-        onChange={(e) =>
-          setModifProduct({ ...modifProduct, price: Number(e.target.value) })
-        }
-        fullWidth
-        margin="dense"
-      />
-      <TextField
-        label="Mennyiség"
-        type="number"
-        value={modifProduct.stock}
-        onChange={(e) =>
-          setModifProduct({ ...modifProduct, stock: Number(e.target.value) })
-        }
-        fullWidth
-        margin="dense"
-      />
-
-      <Button
-        onClick={() => {
-          handleAddToCart(product.id);
-        }}
-      >
-        Termék Kosárhoz adása
-      </Button>
-      <Button
-        onClick={() => {
-          handleDeleteProduct(product.id);
-        }}
-      >
-        Termék törlése
-      </Button>
-
-      <Button
-        onClick={() => {
-          handleModifProduct(product.id);
-        }}
-      >
-        Termék módosítása
-      </Button>
+      <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+        <Card sx={{ maxWidth: 300, margin: 1 }}>
+          <CardContent>
+            <TextField
+              label="Név"
+              type="text"
+              value={inputDataProduct.name}
+              onChange={(e) =>
+                setInputDataProduct({
+                  ...inputDataProduct,
+                  name: e.target.value,
+                })
+              }
+              fullWidth
+              margin="dense"
+              error={errors.name ? true : false}
+              helperText={errors.name}
+            />
+            <TextField
+              label="Ár"
+              type="number"
+              value={inputDataProduct.price}
+              onChange={(e) =>
+                setInputDataProduct({
+                  ...inputDataProduct,
+                  price: Number(e.target.value),
+                })
+              }
+              fullWidth
+              margin="dense"
+              error={errors.price ? true : false}
+              helperText={errors.price}
+            />
+            <TextField
+              label="Mennyiség"
+              type="number"
+              value={inputDataProduct.stock}
+              onChange={(e) =>
+                setInputDataProduct({
+                  ...inputDataProduct,
+                  stock: Number(e.target.value),
+                })
+              }
+              fullWidth
+              margin="dense"
+              error={errors.stock ? true : false}
+              helperText={errors.stock}
+            />
+          </CardContent>
+          {
+            /* id never 0, it's just default value to render */
+            product.id !== 0 ? (
+              <>
+                <CardActions>
+                  <Button
+                    onClick={() => {
+                      handleAddToCart(product.id);
+                    }}
+                  >
+                    Termék Kosárhoz adása
+                  </Button>
+                </CardActions>
+                <CardActions>
+                  <Button
+                    onClick={() => {
+                      handleDeleteProduct(product.id);
+                    }}
+                  >
+                    Termék törlése
+                  </Button>
+                </CardActions>
+                <CardActions>
+                  <Button
+                    onClick={() => {
+                      handleModifProduct(product.id);
+                    }}
+                    disabled={isEqual(inputDataProduct, product)}
+                  >
+                    Termék módosítása
+                  </Button>
+                </CardActions>
+              </>
+            ) : (
+              <>
+                <CardActions>
+                  <Button
+                    onClick={() => {
+                      handleUploadProduct();
+                    }}
+                  >
+                    Termék Feltöltése
+                  </Button>
+                </CardActions>
+              </>
+            )
+          }
+        </Card>
+      </Box>
     </>
   );
 }

@@ -28,7 +28,7 @@ export default async function devRoutes(fastify, options) {
   });
 
   //Dummy post to check data
-  fastify.post('/api/dummyPost/:id', async (request, reply) => {
+  fastify.post('/api/dummyPost/', async (request, reply) => {
     reply.send({ request: request });
   });
   //Dummy delete to check data
@@ -38,5 +38,12 @@ export default async function devRoutes(fastify, options) {
   //Dummy put to check data
   fastify.put('/api/dummyPut/:id', async (request, reply) => {
     reply.send({ request: request });
+  });
+
+  fastify.get('/api/log', async (request, reply) => {
+    const response = await fastify.db.all(
+      "SELECT 'error' AS type, id, url, method, message, stack, time, requestId FROM error_logs UNION ALL SELECT 'response' AS type, id, url, method, NULL AS message, NULL AS stack, time, requestId FROM response_logs ORDER BY time DESC, type ASC;"
+    );
+    return { response };
   });
 }

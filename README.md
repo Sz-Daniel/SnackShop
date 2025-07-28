@@ -18,8 +18,8 @@ npm start
 
 ## Next
 
+- Logging
 - Cart
-- Global Error handling
 
 ## Roadmap
 
@@ -63,6 +63,9 @@ npm start
 - @emotion/react
 - @emotion/styled
 - axios
+- lodash
+- axios-retry
+- zod
 
 ---
 
@@ -108,8 +111,6 @@ npm start
 #### devRoutes.js
 
 - `GET /api/allTable` - Get the whole database
-
 - `GET /api/resetDummyProducts` - Delete all Product and replace the Dummy ones
-
 - `POST /api/dummyPost/:id`, `DELETE /api/dummyDelete/:id`, `PUT /api/dummyPut/:id` -
   Testing the Methods inputs

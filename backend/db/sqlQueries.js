@@ -1,36 +1,3 @@
-//db.js
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-import bcrypt from 'bcrypt';
-
-sqlite3.verbose();
-
-export async function initDb() {
-  //DB declare
-  const db = await open({
-    filename: './app.db',
-    driver: sqlite3.Database,
-  });
-
-  //DB ini
-  const sql = dataTableCreateIni();
-  await db.exec(sql);
-
-  //Admin user seed
-  const adminExists = await db.get(`SELECT * FROM users WHERE name = ?`, [
-    'admin',
-  ]);
-  if (!adminExists) {
-    const passwordHash = await bcrypt.hash('SnackBoss2025', 10);
-    await db.run(
-      `INSERT INTO users (name, passwordHash, isAdmin) VALUES (?, ?, ?)`,
-      ['admin', passwordHash, 1]
-    );
-  }
-
-  return db;
-}
-
 export function dataTableCreateIni() {
   return `
     CREATE TABLE IF NOT EXISTS users (

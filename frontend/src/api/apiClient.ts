@@ -1,24 +1,29 @@
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 
 const apiClient = axios.create({
   baseURL: 'http://localhost:3000',
+  timeout: 5000,
   withCredentials: true,
 });
 
-export async function apiDeleteProduct(id: number) {
-  try {
-    const response = await apiClient.delete(`/api/products/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error('Törlés sikertelen:', error);
-    throw error;
-  }
-}
+apiClient.interceptors.request.use((config) => {
+  config.headers['X-Request-ID'] = crypto.randomUUID();
+  return config;
+});
+
+axiosRetry(apiClient, {
+  retries: 3,
+  retryDelay: (retryCount) => retryCount * 1000,
+  retryCondition: (error) => {
+    return axiosRetry.isNetworkOrIdempotentRequestError(error);
+  },
+});
 
 export default apiClient;
 
 /**
- * apiClient.interceptors.response.use(
+apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (!error.response) {
@@ -27,4 +32,6 @@ export default apiClient;
     return Promise.reject(error);
   }
 );
+
+
  */
