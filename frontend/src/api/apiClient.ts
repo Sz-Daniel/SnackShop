@@ -20,9 +20,6 @@ axiosRetry(apiClient, {
   },
 });
 
-export default apiClient;
-
-/**
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -33,5 +30,4 @@ apiClient.interceptors.response.use(
   }
 );
 
-
- */
+export default apiClient;

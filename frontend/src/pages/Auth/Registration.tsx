@@ -1,8 +1,8 @@
-import { Alert, Button, TextField } from '@mui/material';
+import { Alert, Box, Button, TextField } from '@mui/material';
 import { useState } from 'react';
 import z from 'zod';
 import { registerUser } from '../../api/apiHooks';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Modal from '../Modal';
 
 const schema = z.object({
@@ -13,10 +13,7 @@ const schema = z.object({
 export function Registration() {
   const [modal, setModal] = useState({ open: false, title: '', content: '' });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [formData, setFormData] = useState({
-    name: '',
-    password: '',
-  });
+  const [formData, setFormData] = useState({ name: '', password: '' });
 
   const navigate = useNavigate();
 
@@ -35,6 +32,7 @@ export function Registration() {
       });
       return;
     }
+
     setErrors({});
     try {
       const response = await registerUser(formData);
@@ -49,60 +47,62 @@ export function Registration() {
       setErrors({ server: msg });
     }
   };
-  return (
-    <>
-      {modal.open ? (
-        <>
-          <Modal
-            open={modal.open}
-            title={modal.title}
-            content={modal.content}
-            onClose={handleCloseModal}
-          />
-        </>
-      ) : (
-        <>
-          <TextField
-            label="Név"
-            type="text"
-            value={formData.name}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                name: e.target.value,
-              })
-            }
-            fullWidth
-            margin="dense"
-            error={!!errors.name}
-            helperText={errors.name}
-          />
-          <TextField
-            label="Jelszó"
-            type="password"
-            value={formData.password}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                password: e.target.value,
-              })
-            }
-            fullWidth
-            margin="dense"
-            error={!!errors.password}
-            helperText={errors.password}
-          />
-          {errors.server && (
-            <Alert severity="error" sx={{ mt: 1 }}>
-              {errors.server}
-            </Alert>
-          )}
 
-          <Button fullWidth variant="contained" onClick={handleSubmit}>
-            Regisztráció
-          </Button>
-        </>
-      )}
-    </>
+  if (modal.open) {
+    return (
+      <Modal
+        open={modal.open}
+        title={modal.title}
+        content={modal.content}
+        onClose={handleCloseModal}
+      />
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        width: '100%',
+        maxWidth: 400,
+        margin: '0 auto',
+        padding: 2,
+      }}
+    >
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <TextField
+          label="Név"
+          type="text"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          fullWidth
+          margin="dense"
+          error={!!errors.name}
+          helperText={errors.name}
+        />
+        <TextField
+          label="Jelszó"
+          type="password"
+          value={formData.password}
+          onChange={(e) =>
+            setFormData({ ...formData, password: e.target.value })
+          }
+          fullWidth
+          margin="dense"
+          error={!!errors.password}
+          helperText={errors.password}
+        />
+        <Button fullWidth variant="contained" onClick={handleSubmit}>
+          Regisztráció
+        </Button>
+        {errors.server && (
+          <Alert severity="error" sx={{ mt: 1 }}>
+            {errors.server}
+          </Alert>
+        )}
+      </Box>
+    </Box>
   );
 }

@@ -14,6 +14,7 @@ import { Orders } from '../pages/Admin/Orders';
 import { Logs } from '../pages/Admin/Logs';
 import { Registration } from '../pages/Auth/Registration';
 import { Layout } from '../pages/Layout/Layout';
+import { ServerDown } from '../pages/ServerDown';
 
 export function AppRoutes() {
   return (
@@ -42,6 +43,7 @@ function AdminRoutes() {
         <Route path="/" element={<AdminProductList />} />
         <Route path="/admin/orders" element={<Orders />} />
         <Route path="/admin/logs" element={<Logs />} />
+        <Route path="/server-down" element={<ServerDown />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
@@ -54,6 +56,7 @@ function UserRoutes() {
       <Route element={<Layout />}>
         <Route path="/" element={<UserProductList />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/server-down" element={<ServerDown />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
@@ -67,6 +70,7 @@ function PublicRoutes() {
         <Route path="/" element={<PublicProductList />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registration" element={<Registration />} />
+        <Route path="/server-down" element={<ServerDown />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

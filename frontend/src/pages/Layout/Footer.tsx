@@ -4,7 +4,10 @@ export function Footer() {
   return (
     <>
       <Box>
-        <Typography>Work in Progress</Typography>
+        <Typography>
+          This page is under development and does not have any actual
+          functionality. It is intended solely as a technical demonstration.
+        </Typography>
       </Box>
     </>
   );

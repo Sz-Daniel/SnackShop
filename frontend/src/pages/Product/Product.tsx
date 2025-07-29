@@ -31,23 +31,19 @@ type ProductDisplayProps = {
 export function PublicProductDisplay({ product }: ProductDisplayProps) {
   return (
     <>
-      {product.stock > 0 && (
-        <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-          <Card sx={{ maxWidth: 300, margin: 1 }}>
-            <CardContent>
-              <Typography variant="h6" component="div">
-                {product.name}
-              </Typography>
-              <Typography color="text.secondary">
-                Ár: {product.price} Ft
-              </Typography>
-              <Typography color="text.secondary">
-                Készleten: {product.stock} db
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box>
-      )}
+      <Card sx={{ width: '100%', maxWidth: 400, margin: 1 }}>
+        <CardContent>
+          <Typography variant="h6" component="div">
+            {product.name}
+          </Typography>
+          <Typography color="text.secondary">
+            Price: {product.price} Ft
+          </Typography>
+          <Typography color="text.secondary">
+            On stock: {product.stock} db
+          </Typography>
+        </CardContent>
+      </Card>
     </>
   );
 }
@@ -55,34 +51,28 @@ export function UserProductDisplay({ product }: ProductDisplayProps) {
   const { totalItems, addItem } = useCart();
   const handleAddToCart = (item: ProductDisplayType) => {
     addItem(item);
+    product.stock = product.stock - 1;
   };
   return (
     <>
-      {product.stock > 0 && (
-        <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-          <Card sx={{ maxWidth: 300, margin: 1 }}>
-            <CardContent>
-              <Typography variant="h6" component="div">
-                {product.name}
-              </Typography>
-              <Typography color="text.secondary">
-                Ár: {product.price} Ft
-              </Typography>
-              <Typography color="text.secondary">
-                Készleten: {product.stock} db
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button
-                variant="contained"
-                onClick={() => handleAddToCart(product)}
-              >
-                Kosárhoz adás
-              </Button>
-            </CardActions>
-          </Card>
-        </Box>
-      )}
+      <Card sx={{ width: '100%', maxWidth: 400, margin: 1, padding: 1 }}>
+        <CardContent>
+          <Typography variant="h6" component="div">
+            {product.name}
+          </Typography>
+          <Typography color="text.secondary">
+            Price: {product.price} Ft
+          </Typography>
+          <Typography color="text.secondary">
+            On stock: {product.stock} db
+          </Typography>
+        </CardContent>
+        <CardActions sx={{ justifyContent: 'center' }}>
+          <Button variant="contained" onClick={() => handleAddToCart(product)}>
+            Add to Cart
+          </Button>
+        </CardActions>
+      </Card>
     </>
   );
 }
@@ -91,7 +81,7 @@ interface ProductAdminProps {
   product: ProductDisplayType;
   setReload: React.Dispatch<React.SetStateAction<boolean>>;
 }
-export function ProductAdmin(props: ProductAdminProps) {
+export function ProductAdminDisplay(props: ProductAdminProps) {
   const { product, setReload } = props;
   const [inputDataProduct, setInputDataProduct] =
     useState<ProductDisplayType>(product);
@@ -103,11 +93,10 @@ export function ProductAdmin(props: ProductAdminProps) {
       const result = await deleteProduct(id);
       setReload((prev) => !prev);
     } catch (error: any) {
-      // Validációs hiba esetén itt jelenik meg az üzenet a konzolon
       if (error.validation) {
-        console.log('Validációs hiba:', error.validation);
+        console.log('Validation Error:', error.validation);
       } else {
-        console.log('Hiba történt:', error.message || error);
+        console.log('Something Wrong:', error.message || error);
       }
     }
   };
@@ -125,15 +114,15 @@ export function ProductAdmin(props: ProductAdminProps) {
       });
       return;
     } else {
-      setErrors({}); // előző hibák törlése
+      setErrors({});
       try {
         const result = await updateProduct(inputDataProduct);
         setReload((prev) => !prev);
       } catch (error: any) {
         if (error.validation) {
-          console.log('Validációs hiba:', error.validation);
+          console.log('Validation Error:', error.validation);
         } else {
-          console.log('Hiba történt:', error.message || error);
+          console.log('Something Wrong:', error.message || error);
         }
       }
     }
@@ -144,22 +133,29 @@ export function ProductAdmin(props: ProductAdminProps) {
       const result = await uploadProduct(inputDataProduct);
       setReload((prev) => !prev);
     } catch (error: any) {
-      // Validációs hiba esetén itt jelenik meg az üzenet a konzolon
       if (error.validation) {
-        console.log('Validációs hiba:', error.validation);
+        console.log('Validation Error:', error.validation);
       } else {
-        console.log('Hiba történt:', error.message || error);
+        console.log('Something Wrong:', error.message || error);
       }
     }
   };
 
   return (
     <>
-      <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-        <Card sx={{ maxWidth: 300, margin: 1 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 4,
+          padding: 2,
+          justifyContent: 'flex-start',
+        }}
+      >
+        <Card sx={{ width: '100%', maxWidth: 400, margin: 1 }}>
           <CardContent>
             <TextField
-              label="Név"
+              label="Name"
               type="text"
               value={inputDataProduct.name}
               onChange={(e) =>
@@ -174,7 +170,7 @@ export function ProductAdmin(props: ProductAdminProps) {
               helperText={errors.name}
             />
             <TextField
-              label="Ár"
+              label="Price"
               type="number"
               value={inputDataProduct.price}
               onChange={(e) =>
@@ -189,7 +185,7 @@ export function ProductAdmin(props: ProductAdminProps) {
               helperText={errors.price}
             />
             <TextField
-              label="Mennyiség"
+              label="Quantity"
               type="number"
               value={inputDataProduct.stock}
               onChange={(e) =>
@@ -204,53 +200,50 @@ export function ProductAdmin(props: ProductAdminProps) {
               helperText={errors.stock}
             />
           </CardContent>
-          {
-            /* id never 0, it's just default value to render */
-            product.id !== 0 ? (
-              <>
-                <CardActions>
-                  <Button
-                    onClick={() => {
-                      handleAddToCart(product);
-                    }}
-                  >
-                    Termék Kosárhoz adása
-                  </Button>
-                </CardActions>
-                <CardActions>
-                  <Button
-                    onClick={() => {
-                      handleDeleteProduct(product.id);
-                    }}
-                  >
-                    Termék törlése
-                  </Button>
-                </CardActions>
-                <CardActions>
-                  <Button
-                    onClick={() => {
-                      handleModifProduct(product.id);
-                    }}
-                    disabled={isEqual(inputDataProduct, product)}
-                  >
-                    Termék módosítása
-                  </Button>
-                </CardActions>
-              </>
-            ) : (
-              <>
-                <CardActions>
-                  <Button
-                    onClick={() => {
-                      handleUploadProduct();
-                    }}
-                  >
-                    Termék Feltöltése
-                  </Button>
-                </CardActions>
-              </>
-            )
-          }
+          {product.id !== 0 ? (
+            <>
+              <CardActions>
+                <Button
+                  onClick={() => {
+                    handleAddToCart(product);
+                  }}
+                >
+                  Add to Cart
+                </Button>
+              </CardActions>
+              <CardActions>
+                <Button
+                  onClick={() => {
+                    handleDeleteProduct(product.id);
+                  }}
+                >
+                  Delete Product
+                </Button>
+              </CardActions>
+              <CardActions>
+                <Button
+                  onClick={() => {
+                    handleModifProduct(product.id);
+                  }}
+                  disabled={isEqual(inputDataProduct, product)}
+                >
+                  Edit product
+                </Button>
+              </CardActions>
+            </>
+          ) : (
+            <>
+              <CardActions>
+                <Button
+                  onClick={() => {
+                    handleUploadProduct();
+                  }}
+                >
+                  Upload Product
+                </Button>
+              </CardActions>
+            </>
+          )}
         </Card>
       </Box>
     </>

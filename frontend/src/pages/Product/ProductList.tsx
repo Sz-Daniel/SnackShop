@@ -1,7 +1,7 @@
 import { useProducts } from '../../api/apiHooks';
 import { Box, Grid } from '@mui/material';
 import {
-  ProductAdmin,
+  ProductAdminDisplay,
   PublicProductDisplay,
   UserProductDisplay,
 } from './Product';
@@ -40,21 +40,21 @@ export function AdminProductList() {
     <>
       <Grid
         container
-        spacing={2}
+        spacing={3}
         direction={'row'}
         justifyContent="center"
         alignItems="center"
       >
-        <Grid size={{ xs: 6, md: 8 }}>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-            <ProductAdmin
+        <Grid size={{ xs: 12, md: 8, lg: 12 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4, padding: 2 }}>
+            <ProductAdminDisplay
               key={crypto.randomUUID()}
               product={defaultProduct}
               setReload={setReload}
             />
 
             {productList.map((prod) => (
-              <ProductAdmin
+              <ProductAdminDisplay
                 key={prod.id}
                 product={prod}
                 setReload={setReload}
@@ -67,54 +67,53 @@ export function AdminProductList() {
     </>
   );
 }
-/**
- * Shows the Product list and able To Put into Cart
- * @returns User view of the product list
- */
+
 export function UserProductList() {
   const { data, error } = useProducts();
 
   return (
-    <Grid
-      container
-      spacing={2}
-      direction={'row'}
-      justifyContent="center"
-      alignItems="center"
-    >
-      <Grid size={{ xs: 6, md: 8 }}>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-          {data.map((product) => (
-            <UserProductDisplay key={product.id} product={product} />
-          ))}
-          {error && <div>Error: {error}</div>}
-        </Box>
-      </Grid>
+    <Grid container spacing={3} direction={'row'}>
+      {data
+        .filter((p) => p.stock > 0)
+        .map((product, idx) => (
+          <Grid key={idx} size={{ xs: 12, lg: 4, md: 6, sm: 12, xl: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+              }}
+            >
+              <UserProductDisplay key={product.id} product={product} />
+            </Box>
+          </Grid>
+        ))}
+      {error && <div>Error: {error}</div>}
     </Grid>
   );
 }
-/**
- * @returns Public view of the product list
- */
+
 export function PublicProductList() {
   const { data, error } = useProducts();
 
   return (
-    <Grid
-      container
-      spacing={2}
-      direction={'row'}
-      justifyContent="center"
-      alignItems="center"
-    >
-      <Grid size={{ xs: 6, md: 8 }}>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-          {data.map((product) => (
-            <PublicProductDisplay key={product.id} product={product} />
-          ))}
-          {error && <div>Error: {error}</div>}
-        </Box>
-      </Grid>
+    <Grid container spacing={3} direction={'row'}>
+      {data
+        .filter((p) => p.stock > 0)
+        .map((product, idx) => (
+          <Grid key={idx} size={{ xs: 12, lg: 4, md: 6, sm: 12, xl: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+              }}
+            >
+              <PublicProductDisplay key={product.id} product={product} />
+            </Box>
+          </Grid>
+        ))}
+      {error && <div>Error: {error}</div>}
     </Grid>
   );
 }

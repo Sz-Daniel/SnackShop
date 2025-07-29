@@ -34,37 +34,51 @@ export function Login() {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <TextField
-        label="Felhasználónév"
-        type="text"
-        value={inputData.name}
-        onChange={(e) => setInputData({ ...inputData, name: e.target.value })}
-        fullWidth
-        margin="dense"
-        error={errors.name ? true : false}
-        helperText={errors.name}
-      />
-      <TextField
-        label="Jelszó"
-        type="password"
-        value={inputData.password}
-        onChange={(e) =>
-          setInputData({ ...inputData, password: e.target.value })
-        }
-        fullWidth
-        margin="dense"
-        error={errors.password ? true : false}
-        helperText={errors.password}
-      />
-      <Button variant="contained" onClick={handleLogin}>
-        Bejelentkezés
-      </Button>
-      {errors.server && (
-        <Alert severity="error" sx={{ mt: 1 }}>
-          {errors.server}
-        </Alert>
-      )}
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        width: '100%',
+        maxWidth: 400,
+        margin: '0 auto',
+        padding: 2,
+      }}
+    >
+      <Box
+        sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 2 }}
+      >
+        <TextField
+          label="Username"
+          type="text"
+          value={inputData.name}
+          onChange={(e) => setInputData({ ...inputData, name: e.target.value })}
+          fullWidth
+          margin="dense"
+          error={errors.name ? true : false}
+          helperText={errors.name}
+        />
+        <TextField
+          label="Password"
+          type="password"
+          value={inputData.password}
+          onChange={(e) =>
+            setInputData({ ...inputData, password: e.target.value })
+          }
+          fullWidth
+          margin="dense"
+          error={errors.password ? true : false}
+          helperText={errors.password}
+        />
+        <Button variant="contained" onClick={handleLogin}>
+          Login
+        </Button>
+        {errors.server && (
+          <Alert severity="error" sx={{ mt: 1 }}>
+            {errors.server}
+          </Alert>
+        )}
+      </Box>
     </Box>
   );
 }

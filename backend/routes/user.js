@@ -94,7 +94,7 @@ export default async function userRoutes(fastify, options) {
 
     return reply.send({
       success: true,
-      orderId,
+      cartItems,
       message: 'Rendelés sikeresen leadva',
     });
   });
