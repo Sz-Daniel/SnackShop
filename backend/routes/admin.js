@@ -1,5 +1,7 @@
 // routes/admin.js
 // schemas/productSchema.js
+
+//Szerapált schéma, függően melyiknek melyik részét használjuk
 const statusResponse = {
   200: {
     type: 'object',
@@ -59,7 +61,7 @@ export default async function adminRoutes(fastify, options) {
         fastify.log.error(err);
         reply
           .status(500)
-          .send({ error: 'Hiba történt a termék létrehozása közben' });
+          .send({ message: 'Hiba történt a termék létrehozása közben' });
       }
     }
   );
@@ -86,7 +88,7 @@ export default async function adminRoutes(fastify, options) {
         if (result.changes === 0) {
           return reply
             .status(404)
-            .send({ error: 'Nem található ilyen termék' });
+            .send({ message: 'Nem található ilyen termék' });
         }
 
         reply.send({ status: 'ok' });
@@ -94,7 +96,7 @@ export default async function adminRoutes(fastify, options) {
         fastify.log.error(err);
         reply
           .status(500)
-          .send({ error: 'Hiba történt a termék módosítása közben' });
+          .send({ message: 'Hiba történt a termék módosítása közben' });
       }
     }
   );
@@ -120,17 +122,50 @@ export default async function adminRoutes(fastify, options) {
         if (result.changes === 0) {
           return reply
             .status(404)
-            .send({ error: 'Nem található ilyen termék' });
+            .send({ message: 'Nem található ilyen termék' });
         }
 
         reply.send({ status: `id: ${id} törölve` });
       } catch (err) {
         fastify.log.error(err);
-        reply.status(500).send({ error: 'Hiba történt a törlés során' });
+        reply.status(500).send({ message: 'Hiba történt a törlés során' });
       }
     }
   );
 
   // rendeléslista adminoknak
-  fastify.get('/api/orders', async (request, reply) => {});
+  fastify.get('/api/orders', async (request, reply) => {
+    try {
+      const response = await fastify.db.all(
+        `SELECT
+          o.id AS order_id,
+          o.date AS order_date,
+          u.name AS user_name,
+          p.name AS product_name,
+          oi.quantity,
+          p.price,
+          (oi.quantity * p.price) AS item_total
+        FROM orders o
+        JOIN users u ON o.userId = u.id
+        JOIN order_items oi ON o.id = oi.orderId
+        JOIN products p ON oi.productId = p.id
+        ORDER BY o.id, p.name;
+        `
+      );
+
+      reply.send(response);
+    } catch (err) {
+      fastify.log.error(err);
+      reply
+        .status(500)
+        .send({ message: 'Hiba történt a rendelések lekérésekor' });
+    }
+  });
+
+  fastify.get('/api/log', async (request, reply) => {
+    const response = await fastify.db.all(
+      "SELECT 'error' AS type, id, url, method, message, stack, time, requestId FROM error_logs UNION ALL SELECT 'response' AS type, id, url, method, NULL AS message, NULL AS stack, time, requestId FROM response_logs ORDER BY time DESC, type ASC;"
+    );
+    return { response };
+  });
 }

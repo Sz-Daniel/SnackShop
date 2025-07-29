@@ -6,29 +6,31 @@ import bcrypt from 'bcrypt';
 sqlite3.verbose();
 
 export async function initDb() {
-  //DB declare
-  const db = await open({
-    filename: './app.db',
-    driver: sqlite3.Database,
-  });
+  try {
+    //DB declare
+    const db = await open({
+      filename: './app.db',
+      driver: sqlite3.Database,
+    });
+    const sql = dataTableCreateIni();
+    await db.exec(sql);
 
-  //DB ini
-  const sql = dataTableCreateIni();
-  await db.exec(sql);
+    const adminExists = await db.get(`SELECT * FROM users WHERE name = ?`, [
+      'admin',
+    ]);
+    if (!adminExists) {
+      const passwordHash = await bcrypt.hash('SnackBoss2025', 10);
+      await db.run(
+        `INSERT INTO users (name, passwordHash, isAdmin) VALUES (?, ?, ?)`,
+        ['admin', passwordHash, 1]
+      );
+    }
 
-  //Admin user seed
-  const adminExists = await db.get(`SELECT * FROM users WHERE name = ?`, [
-    'admin',
-  ]);
-  if (!adminExists) {
-    const passwordHash = await bcrypt.hash('SnackBoss2025', 10);
-    await db.run(
-      `INSERT INTO users (name, passwordHash, isAdmin) VALUES (?, ?, ?)`,
-      ['admin', passwordHash, 1]
-    );
+    return db;
+  } catch (error) {
+    console.error('Adatbázis inicializálási hiba:', error);
+    throw error; // vagy kezelhető hiba visszadobása
   }
-
-  return db;
 }
 
 export function dataTableCreateIni() {

@@ -8,29 +8,33 @@ import adminRoutes from './routes/admin.js';
 import userRoutes from './routes/user.js';
 import publicRoutes from './routes/public.js';
 import devRoutes from './routes/dev.js';
-import loggerHooks from './middleware/middleware.js';
+
+import loggerHooks from './plugins/middleware.js';
 
 const fastify = Fastify({
   logger: {
-    genReqId: () => crypto.randomUUID(), // ez is működik
+    genReqId: () => crypto.randomUUID(),
   },
 });
 
+// Enable CORS for the frontend
 await fastify.register(cors, {
   origin: 'http://localhost:5173',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 });
-
+await fastify.register(loggerHooks);
+// Register session plugin
 await fastify.register(sessionPlugin);
 
+// Initialize the database and make it available in the Fastify instance
 const db = await initDb();
 fastify.decorate('db', db);
 
-await fastify.register(loggerHooks);
+// Register onRequest logging and error handling hooks
 
+// Register routes
 await fastify.register(devRoutes);
-
 await fastify.register(authRoutes);
 await fastify.register(adminRoutes);
 await fastify.register(userRoutes);

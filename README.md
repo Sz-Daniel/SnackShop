@@ -18,8 +18,9 @@ npm start
 
 ## Next
 
-- Logging
-- Cart
+- Code refactoring, file sorting
+- UI Refactoring
+- Backend auth fixing
 
 ## Roadmap
 
@@ -76,19 +77,23 @@ npm start
 - `server.js`
 - `db/db.js` with initial database creation and admin seeding
 - Basic API routing: `publicRoutes`, `userRoutes`, `adminRoutes`, `authRoutes`, `devRoutes`
-- Middleware: `isAuthenticated`, `isAdmin`
-- Session and cookie handling
+- Middleware as Plugin: UniqueID, onResponse OnError logging into db
+- Session and cookie handling as Plugin
 - CORS configured
 - Parallel API refactoring alongside frontend development
 
 #### Frontend
 
 - Basic API handling
-- Routing structure
-- Layout setup
+- Role-component-routing structure
+- Layout, role-components
 - Single Page Application: main page implemented
 - ProductList
-- ProductDisplay - Delete - Modif
+- ProductDisplay - Delete - Modif - Add Car
+- Login - Session handling - Register
+- CartContext, Functionality, Cart Page
+- Orders Page
+- Logs Page
 
 ---
 
@@ -98,19 +103,26 @@ npm start
 
 - `POST /api/register` – Register new user (username, password)
 - `POST /api/login` – User login (username, password)
+- `GET /api/session` – Session re-validitaon
+- `POST /api/Logout` – Session destroing
 
 #### public.js
 
 - `GET /api/products` – snacks listing
 
+#### user.js
+
+- `POST /api/order` – Send order
+
 #### admin.js
 
+- `POST /api/products` - New Product data upload
 - `PUT /api/products/:id` - Product data modification
 - `DELETE /api/products/:id` - Delete product
+- `GET /api/orders` - All order data
+- `GET /api/log` - Backend Logs
 
 #### devRoutes.js
 
 - `GET /api/allTable` - Get the whole database
 - `GET /api/resetDummyProducts` - Delete all Product and replace the Dummy ones
-- `POST /api/dummyPost/:id`, `DELETE /api/dummyDelete/:id`, `PUT /api/dummyPut/:id` -
-  Testing the Methods inputs
