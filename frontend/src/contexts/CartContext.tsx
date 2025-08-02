@@ -25,7 +25,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       const existing = prevItems.find((item) => item.product.id === product.id);
       if (existing) {
         // Ellenőrizzük, hogy ne lépjük túl a készletet
-        if (existing.quantity + 1 > product.stock) {
+        if (product.stock === 0) {
           // Nincs elég készlet, ne növeljük
           alert('Nincs elég készlet a termékből');
           return prevItems;
