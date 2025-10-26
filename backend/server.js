@@ -23,6 +23,7 @@ await fastify.register(cors, {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 });
+// Register onRequest logging and error handling hooks
 await fastify.register(loggerHooks);
 // Register session plugin
 await fastify.register(sessionPlugin);
@@ -30,8 +31,6 @@ await fastify.register(sessionPlugin);
 // Initialize the database and make it available in the Fastify instance
 const db = await initDb();
 fastify.decorate('db', db);
-
-// Register onRequest logging and error handling hooks
 
 // Register routes
 await fastify.register(devRoutes);

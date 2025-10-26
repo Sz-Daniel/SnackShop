@@ -1,26 +1,28 @@
 # SnackShop
 
-### Run Instructions
+A lightweight, beginner-friendly webshop simulation demonstrating core web development concepts, including user authentication, order handling, and basic admin management.
 
-#### Backend
+Admin user
+Username: admin
+Password: SnackBoss2025
+
+## Run Instructions
+
+### Backend
 
 ```bash
+npm install
 node --watch server.js
 ```
 
-#### Frontend
+### Frontend
 
 ```bash
+npm install
 npm start
 ```
 
 ---
-
-## Next
-
-- Code refactoring, file sorting
-- UI Refactoring
-- Backend auth fixing
 
 ## Roadmap
 
@@ -35,21 +37,21 @@ npm start
 
 ---
 
-### Documentation Notes
+## Documentation Notes
 
-#### Development Perspective
+### Development Perspective
 
 - Parallel development and synchronization: Frontend → Backend
-- Initial goal: make it 'somehow' work → then structure and optimize → make it as readable and usable as possible. Let it be the kind I would like to receive from someone else.
+- Built an initial functional version, then focused on structure, optimization, and readability — aiming for the quality I would expect from others.
 - The main SPA page should be fully functional without admin/user rights
 - Refactoring needed on both frontend and backend sides
 - The README will be fully extended and rewritten after the first major refactor once the main SPA is functional
 
 ---
 
-### Stack
+## Stack
 
-#### Backend
+### Backend
 
 - JavaScript (planned migration to TypeScript)
 - SQLite3
@@ -57,7 +59,7 @@ npm start
 - @fastify/session
 - @fastify/cookie
 
-#### Frontend
+### Frontend
 
 - create-react-app with TypeScript template
 - @mui/material
@@ -72,7 +74,7 @@ npm start
 
 ## Completed
 
-#### Backend
+### Backend
 
 - `server.js`
 - `db/db.js` with initial database creation and admin seeding
@@ -82,14 +84,14 @@ npm start
 - CORS configured
 - Parallel API refactoring alongside frontend development
 
-#### Frontend
+### Frontend
 
 - Basic API handling
 - Role-component-routing structure
 - Layout, role-components
 - Single Page Application: main page implemented
 - ProductList
-- ProductDisplay - Delete - Modif - Add Car
+- ProductDisplay - Delete - Modify - Add to Cart
 - Login - Session handling - Register
 - CartContext, Functionality, Cart Page
 - Orders Page
@@ -99,22 +101,22 @@ npm start
 
 ## API Details
 
-#### auth.js
+### auth.js
 
 - `POST /api/register` – Register new user (username, password)
 - `POST /api/login` – User login (username, password)
-- `GET /api/session` – Session re-validitaon
-- `POST /api/Logout` – Session destroing
+- `GET /api/session` – Session re-validation
+- `POST /api/Logout` – Session destroying
 
-#### public.js
+### public.js
 
 - `GET /api/products` – snacks listing
 
-#### user.js
+### user.js
 
 - `POST /api/order` – Send order
 
-#### admin.js
+### admin.js
 
 - `POST /api/products` - New Product data upload
 - `PUT /api/products/:id` - Product data modification
@@ -122,7 +124,7 @@ npm start
 - `GET /api/orders` - All order data
 - `GET /api/log` - Backend Logs
 
-#### devRoutes.js
+### devRoutes.js
 
 - `GET /api/allTable` - Get the whole database
 - `GET /api/resetDummyProducts` - Delete all Product and replace the Dummy ones

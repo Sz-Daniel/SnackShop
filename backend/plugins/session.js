@@ -10,11 +10,11 @@ export default fp(async function (fastify, opts) {
     cookie: {
       secure: false, // fejlesztői környezetben HTTP miatt false
       httpOnly: true,
-      sameSite: 'lax', // vagy 'none' ha HTTPS, de nem ajánlom fejlesztői környezetben
+      sameSite: 'lax', // vagy 'none' ha HTTPS
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 nap
     },
     saveUninitialized: false,
-    cookieName: 'sid', // opcionális, alapértelmezett is jó
+    cookieName: 'sid', 
   });
 });
