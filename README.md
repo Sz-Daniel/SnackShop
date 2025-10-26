@@ -53,7 +53,7 @@ npm start
 
 ### Backend
 
-- JavaScript (planned migration to TypeScript)
+- Node.js (planned migration to TypeScript)
 - SQLite3
 - bcrypt
 - @fastify/session
